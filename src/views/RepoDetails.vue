@@ -11,19 +11,41 @@ onMounted(() => {
   const name = route.params.name
 
   fetch(`https://api.github.com/repos/Emery-Hub/${name}`)
+    // .then((response) => {
+    //   return response.json()
+    // })
+    // .then((data) => {
+    //   console.log(data)
+    //   repoDetails.value = data
+    // })
+    // .catch((error) => {
+    //   console.error('Error fetching repository', error)
+    //   if (error.response.status === 404) {
+    //     router.push('/404')
+    //   }
+    // })
+
     .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      console.log(data)
-      repoDetails.value = data
-    })
-    .catch((error) => {
-      console.error('Error fetching repository', error)
-      if (error.response.status === 404) {
-        router.push('/404')
-      }
-    })
+    if (!response.ok){
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then((data) => {
+    if (data === null) {
+      router.push('/404');
+      return;
+    }
+    console.log(data);
+    repoDetails.value = data;
+  })
+  .catch((error) => {
+    console.error('Error fetching repository', error);
+    if (error.message === 'Network response was not ok' || error.response?.status === 404) {
+      router.push('/404');
+    }
+  });
+
 })
 </script>
 
